@@ -1,22 +1,28 @@
 // Enter testbench code here
 `timescale 1ns/1ps
-module tb_CLA_4bit;
-    reg  [3:0] A, B;
-    reg        Cin;
-    wire [3:0] Sum;
-    wire       Cout;
+module tb_ripple_carry_adder_4bit_gate;
 
-    CLA_4bit uut (.A(A), .B(B), .Cin(Cin), .Sum(Sum), .Cout(Cout));
+    reg  [3:0] a, b;
+    reg        cin;
+    wire [3:0] sum;
+    wire       cout;
+
+    ripple_carry_adder_4bit_gate uut (
+        .a(a), .b(b), .cin(cin),
+        .sum(sum), .cout(cout)
+    );
 
     initial begin
-        $dumpfile("CLA_4bit.vcd");
-        $dumpvars(0, tb_CLA_4bit);
+        $dumpfile("ripple_carry_adder_4bit_gate.vcd");
+        $dumpvars(0, tb_ripple_carry_adder_4bit_gate);
 
-        A=4'b0101; B=4'b0011; Cin=0; #10;
-        A=4'b1111; B=4'b0001; Cin=0; #10;
-        A=4'b1010; B=4'b0101; Cin=1; #10;
-        A=4'b1111; B=4'b1111; Cin=1; #10;
+        // Test cases
+        a = 4'b0001; b = 4'b0010; cin = 0; #10;
+        a = 4'b0101; b = 4'b0111; cin = 0; #10;
+        a = 4'b1111; b = 4'b0001; cin = 0; #10;
+        a = 4'b1010; b = 4'b0101; cin = 1; #10;
 
         $finish;
     end
+
 endmodule

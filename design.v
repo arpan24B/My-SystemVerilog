@@ -1,29 +1,35 @@
 // Enter source text here
-// Code your design here
-module CLA_4bit (
-    input  [3:0] A,
-    input  [3:0] B,
-    input        Cin,
-    output [3:0] Sum,
-    output       Cout
+// Gate-Level Full Adder
+module full_adder_gate (
+    input  a, b, cin,
+    output sum, cout
 );
-    wire [3:0] G, P;  // Generate and Propagate
-    wire [4:0] C;     // Carry signals
+    wire w1, w2, w3;
 
-    assign C[0] = Cin;
+    // Sum logic
+    xor (w1, a, b);
+    xor (sum, w1, cin);
 
-    // Generate and Propagate signals
-    assign G = A & B;
-    assign P = A ^ B;
+    // Carry logic
+    and (w2, a, b);
+    and (w3, w1, cin);
+    or  (cout, w2, w3);
 
-    // Carry equations
-    assign C[1] = G[0] | (P[0] & C[0]);
-    assign C[2] = G[1] | (P[1] & G[0]) | (P[1] & P[0] & C[0]);
-    assign C[3] = G[2] | (P[2] & G[1]) | (P[2] & P[1] & G[0]) | (P[2] & P[1] & P[0] & C[0]);
-    assign C[4] = G[3] | (P[3] & G[2]) | (P[3] & P[2] & G[1]) | (P[3] & P[2] & P[1] & G[0]) | 
-                  (P[3] & P[2] & P[1] & P[0] & C[0]);
+endmodule
 
-    // Sum calculation
-    assign Sum  = P ^ C[3:0];
-    assign Cout = C[4];
+// 4-bit Ripple Carry Adder using Gate-Level Full Adders
+module ripple_carry_adder_4bit_gate (
+    input  [3:0] a, b,
+    input        cin,
+    output [3:0] sum,
+    output       cout
+);
+    wire c1, c2, c3;  // internal carry signals
+
+    // Instantiate four gate-level full adders
+    full_adder_gate fa0 (a[0], b[0], cin,  sum[0], c1);
+    full_adder_gate fa1 (a[1], b[1], c1,   sum[1], c2);
+    full_adder_gate fa2 (a[2], b[2], c2,   sum[2], c3);
+    full_adder_gate fa3 (a[3], b[3], c3,   sum[3], cout);
+
 endmodule
